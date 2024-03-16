@@ -1,0 +1,179 @@
+---
+title: "actividadRLSimple"
+author: "Carmen García Fernández"
+date: "2024-03-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Pregunta 1
+Al tratarse de un programa dedicado a la estadística y gráficos, podemos usar el lenguaje R de programación para procesar diversos datos recopilados en una campaña de excavación de cara a realizar ciertos tipos de análisis, principalmente estadísticos. Destacar que no podemos basar todo un estudio como podría ser explicar un suceso exclusivamente con este programa; en todo caso, tras unos estudios con programas y herramientas especializadas para diversos tipos de análisis (ejemplo: Carbono14), con los resultados de dicho proceso, nosotros usar este programa para recopilar resultados y darles un aspecto más visual a estos resultados previos.
+
+##Pregunta 2
+Esto no es posible ya que la correlación lineal de Pearson se basa en pruebas a partir de variables cuantitativas como podría ser el peso y la distancia. Algunos de los supuestos que debe cumplir este tipo de correlación es normalidad, linealidad, homocedasticidad y continuidad entre sus variables. Es decir, la correlación de Pearson solo analiza la relación lineal entre variables, por lo que unas variables de causa-efecto no podrían establecer entre ellas ningún tipo de relación.
+
+##Pregunta 3
+Correlación no es lo mismo que causalidad, siempre y cuando se pueda dar cuenta de todos los mecanismos o posibles resultados que darían como resultado dicha relación. La causalidad alude a la relación de causa y efecto entre variables, pero como ya hemos dicho, R como lenguaje no posee herramientas para determinar la existencia de causalidad entre variables.
+
+#Ejemplo:
+```{r echo=TRUE}
+library(readxl)
+datos <- read_excel("C:/actividadCorrelacionLineal/data.xls")
+```
+
+```{r echo=TRUE}
+modelo <- lm(peso ~ altura, data = datos)
+``` 
+
+```{r}
+summary(modelo)
+```
+
+##Pregunta 4
+Dentro de una regresión lineal, existen ciertos parámetros como los que encontramos en el método de Mínimos Cuadrados Ordinales (MCO), que en ese caso serían "Pendiente de la Recta", la cual hace referencia a cuánto aumenta o se reduce el valor predicho en nuestra variable; y "Ordenada", también llamada "intercept", referente a cuánto vale la variable predicha cuando la variable independiente es cero.
+
+##Pregunta 5
+En los planos cartesianos el eje "X" también puede recibir el nombre de abscisas, es el eje "Y" el que recibe el nombre de eje de ordenadas.
+
+
+##Pregunta 6
+Aunque en ambos casos se trabaja con una variable dependiente y otra variable independiente, la diferencia entre ambos modelos reside en el número de variables que procesan. La recta de regresión es un modelo lineal simple en la que solo están implicadas dos variables, una dependiente y otra independiente, dando como resultado la relación lineal entre estas dos variables (como se ha tratado en la práctica "actividadCorrelacionLineal).
+
+Mientras que el plano de regresión es un modelo lineal múltiple, lo que significa que trabaja con dos o más variables, una dependiente y por ejemplo varias independientes..
+
+
+##Pregunta 7
+El contraste de hipótesis es un método estadístico que nos va a permitir aceptar o rechazar una determinada afirmación (hipotesis nula) en función de los valores que hemos obtenido en la realidad. Tenemos una "H"/ "H0" que suponemos que es cierta y una H1 que es la hipótesis que sustituye a la H0 en caso de que esta sea rechazada
+
+
+##Pregunta 8
+```{r echo=TRUE}
+x_distancia <- c(1.1,100.2, 90.3, 5.4, 57.5, 6.6, 34.7, 65.8, 57.9, 86.1)
+y_cuentas <- c(110,2,6,98,40,94,31,5,8,10)
+xy <- y_cuentas * x_distancia
+x_cuadrado <- x_distancia^2
+tabla_datos <- data.frame (x_distancia, y_cuentas, xy, x_cuadrado)
+kbl(tabla_datos) %>%
+kable_minimal()
+```
+
+```{r echo=TRUE}
+sumatorio_columnas <- colSums(tabla_datos[ , 1:4])
+sumatorio_columnas
+```
+
+```{r echo=TRUE}
+totales_sumatorio <- data.frame (x_distancia = c(505.60),
+                                 y_cuentas = c(404.00),
+                                 xy = c(7041.70),
+                                 x_cuadrado = c(37873.66))
+```
+
+```{r echo=TRUE}
+sumatorio_columnas_df <- rbind (tabla_datos, totales_sumatorio)
+
+kbl(sumatorio_columnas_df)%>%
+  kable_minimal() %>%
+  row_spec(nrow(sumatorio_columnas_df), bold = TRUE, color = "yellow", background = "purple")
+```
+
+
+##Pregunta 9
+Sí, con los datos obtenidos ahora se pueden calcular los parámetros de la recta que mejor se aproxima a nuestra nube de puntos o muestra. Finalmente obtenemos la siguiente ecuación de regresión.
+
+
+##Pregunta 10
+Cuando los valores resultantes son negativos o positivos, en este proceso se considera que un modelo puede "subestimar" o "sobrestimar" la realidad. Por lo tanto, si estas implicaciones me llevan a obtener un intercepto de valor "0", es que mi modelo coincide con la hipótesis H0.
+
+
+##Pregunta 11
+Yi = 95.3688 - 1.0872 x X_distancia - y_cuentas
+
+##Pregunta 12
+en el primer valor (1.1 km de distancia del yacimiento a la mina) el resultado era 94.17, resultado que restamos al número 110 de cuentas y nos da resultado 15,87. Este resultado nos indica que nuestro modelo está subestimando la realidad
+
+
+##Pregunta 13
+```{r echo=TRUE}
+predicciones <- c(-6.682842, 85.520196, 28.938591, 84.216973, 53.69983, 19.924631, 28.504183, -2.121561)
+cuentas <- c(6, 98, 40, 94, 31, 5, 8, 10)
+length(predicciones)
+length(cuentas)
+```
+```{r echo=TRUE}
+plot(cuentas, predicciones)
+cor(cuentas, predicciones)
+
+reg_lin <- lm(predicciones~cuentas)
+summary(reg_lin)
+```
+```{r echo=TRUE}
+plot(cuentas, predicciones); abline(reg_lin, col="red")
+
+residuos <- residuals(reg_lin)
+ajustados <- fitted.values(reg_lin)
+
+plot(cuentas, predicciones); abline (h=0)
+plot(ajustados, residuos); abline(h=0)
+```
+
+##Pregunta 14
+```{r echo=TRUE}
+qqnorm(residuos); qqline(residuos)
+ks.test(residuos, pnorm)
+shapiro.test(residuos)
+```
+Con estos resultados, podemos decir que sí cumple con el supuesto de normalidad
+
+##Pregunta 15
+Para poder realizar la modelización lineal, usaremos los dos conjuntos de datos que tenemos, "predicciones" y "cuentas" convirtiéndolos en vectores y así crear un data frame 
+
+```{r echo=TRUE}
+predicciones <- c(-6.682842, 85.520196, 28.938591, 84.216973, 53.69983, 19.924631, 28.504183, -2.121561)
+cuentas <- c(6, 98, 40, 94, 31, 5, 8, 10)
+pred_cuent <- data.frame(predicciones, cuentas)
+knitr::kable(pred_cuent)
+```
+
+
+
+##Pregunta 16
+```{r echo=TRUE}
+library(caret)
+model_reg_lineal <- lm(cuentas~predicciones, data = pred_cuent)
+```
+
+```{r echo=TRUE}
+set.seed(123)
+resultados <- train(cuentas~predicciones,
+                    data = pred_cuent,
+                    method = "lm",
+                    trControl = trainControl(method = "cv"))
+```
+```{r}
+print(resultados)
+```
+
+##Pregunta 17
+Cuando hablamos de un intervalo de confianza del 95%, se refiere a que hay un 95% de probabilidades que los valores dentro del intervalo donde estamos trabajando sean verdaderos, dejando un margen de 5% al azar en la correlación lineal.
+
+Cuando hablamos de un nivel de significación Alpha, estamos hablando de un Error tipo I, el cual consiste en la probabilidad de rechazar la hipótesis inicial sabiendo que H0 es verdadera o correcta. Sería el nivel de significación.
+
+
+##Pregunta 18
+Cuando se presentan estimaciones menos precisas y que favorecen a que aparezcan más errores, tenemos que considerar que nuestro modelo presentará heterocedasticidad.
+
+
+##Pregunta 19
+La medida de precisión es el coeficiente de determinación R2 (R cuadrado), el cual ya nos es familiar por el coeficiente de correlación de Pearson. Es una medida comprendida que observa cómo de bien se ajusta la linea de regresión muestral a los datos, considerándose una correlación perfecta donde R= +1 o -1 
+
+
+##Pregunta 20
+Los datos atípicos son aquellas observaciones que se desvían considerablemente de otras observaciones, despertando sospechas de estar generadas por un mecanismo diferente. Esto puede deberse a diferentes tipos de errores como de medición, traspaso de datos o factores sorpresa y que, en general, podrían llegar a afectar a la precisión de nuestro modelo estadístico. Estos datos atípicos estarían presentes en la variable dependiente.
+
+Por su parte, el apalancamiento de una observación dentro de un modelo estadístico muestra que las observaciones cercanas a la medida de la variable explicativa tienen un bajo apalancamiento, pero las que están lejos de la media tienen un alto apalancamiento. Esto puede ser o no influyente, aunque dependerá también de las dimensiones del residuo. Por último, estas señales de apalancamiento aparecen en los valores extremos de las variables independientes.
+
+Por lo tanto, si bien ambos conceptos hacen referencia a valores extremos dentro de nuestro modelo estadístico, se diferencian por el lugar donde se encuentran presentes, situándose cada una en distintas variables.
